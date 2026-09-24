@@ -1,0 +1,134 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique @db.VarChar(100)
+  password  String   @db.VarChar(255)
+  name      String   @db.VarChar(100)
+  role      Role     @default(STUDENT)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  student   Student?
+}
+
+model Department {
+  id          String   @id @default(cuid())
+  code        String   @unique @db.VarChar(10)
+  name        String   @db.VarChar(100)
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  courses     Course[]
+}
+
+model Course {
+  id            String      @id @default(cuid())
+  code          String      @unique @db.VarChar(20)
+  name          String      @db.VarChar(100)
+  description   String?
+  durationYears Int         @default(3)
+  departmentId  String
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+  classYears    ClassYear[]
+  department    Department  @relation(fields: [departmentId], references: [id])
+
+  @@unique([code, departmentId])
+}
+
+model ClassYear {
+  id        String    @id @default(cuid())
+  name      String    @db.VarChar(50)
+  year      Int
+  courseId  String
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  course    Course    @relation(fields: [courseId], references: [id])
+  students  Student[]
+
+  @@unique([courseId, year])
+}
+
+model Student {
+  prn         String     @id @db.VarChar(20)
+  name        String     @db.VarChar(100)
+  email       String?    @unique @db.VarChar(100)
+  batch       String?    @db.VarChar(20)
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  classYearId String?
+  userId      String?    @unique
+  user        User?      @relation(fields: [userId], references: [id])
+  results     Result[]
+  classYear   ClassYear? @relation(fields: [classYearId], references: [id])
+  createdBy   String?
+  changedBy   String?
+  changedAt   DateTime?
+}
+
+model Semester {
+  id           Int       @id @default(autoincrement())
+  number       Int       @unique
+  name         String    @db.VarChar(20)
+  startDate    DateTime?
+  endDate      DateTime?
+  academicYear String?
+  examSession  String?
+  resultDate   DateTime?
+  results      Result[]
+  subjects     Subject[]
+}
+
+model Subject {
+  id           String   @id @db.VarChar(20)
+  name         String   @db.VarChar(100)
+  code         String   @unique @db.VarChar(20)
+  credits      Int
+  semesterId   Int
+  isHalfCredit Boolean  @default(false)
+  results      Result[]
+  semester     Semester @relation(fields: [semesterId], references: [id])
+}
+
+model Result {
+  id                  String    @id @default(cuid())
+  prn                 String
+  subjectId           String
+  semesterId          Int
+  marksObtained       Int
+  maxMarks            Int       @default(100)
+  grade               String?   @db.VarChar(3)
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
+  externalMarks       Int?
+  gradePoint          Decimal?  @db.Decimal(3, 1)
+  internalMarks       Int?
+  maxExternalMarks    Int       @default(75)
+  maxInternalMarks    Int       @default(25)
+  remark              String?   @db.VarChar(20)
+  examSession         String?
+  minimumPassingMarks Int?
+  resultDate          DateTime?
+  seatNumber          String?
+  semesterCredits     Int?
+  semesterMaximum     Int?
+  semesterStatus      String?
+  semesterTotal       Int?
+  student             Student   @relation(fields: [prn], references: [prn])
+  semester            Semester  @relation(fields: [semesterId], references: [id])
+  subject             Subject   @relation(fields: [subjectId], references: [id])
+
+  @@unique([prn, subjectId, semesterId])
+}
+
+enum Role {
+  ADMIN
+  STUDENT
+}
