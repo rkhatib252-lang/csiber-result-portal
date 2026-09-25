@@ -1,17 +1,35 @@
-# CSIBER Result Portal — V1
+# CSIBER Result Portal
 
-Frontend prototype for the college result management portal.
+A web-based academic result management portal for importing result data, searching student results, managing records, and generating result PDFs.
 
-## Run locally
+> **Status:** Active development. This public repository uses synthetic demo data only and is not an official CSIBER deployment.
 
-```powershell
+## Features
+
+- Student result search and viewing
+- Admin authentication and result management
+- Excel/CSV result import
+- Prisma + PostgreSQL data layer
+- Result calculation and grade handling
+- PDF result/marksheet generation
+- QR-code support
+- Synthetic demo seed data
+
+## Tech Stack
+
+- Next.js 16
+- React 19
+- TypeScript
+- Tailwind CSS
+- Prisma
+- PostgreSQL
+- PDFKit
+- QRCode
+- @keep-lts/xlsx
+
+## Getting Started
+
+```bash
+git clone https://github.com/rkhatib252-lang/csiber-result-portal.git
+cd csiber-result-portal
 npm install
-npm run dev
-```
-
-Open http://localhost:3000
-
-Demo PRN: `DEMO-BCA-001`
-
-## Roadmap
-V1: frontend demo → V2: PostgreSQL + Prisma + authentication + Excel/CSV import + PDF → V3: security, audit logs, analytics and deployment.
