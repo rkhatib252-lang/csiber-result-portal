@@ -278,7 +278,7 @@ function StudentDashboardPageContent() {
     semester: currentSemesterNum,
     academicYear: student.academicYear || "2025-26",
     email: student.email || "student@csiber.edu",
-    phone: student.phone || "ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â",
+    phone: student.phone || "Not provided",
   };
 
   return (
